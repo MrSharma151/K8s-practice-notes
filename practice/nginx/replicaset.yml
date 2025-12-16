@@ -1,0 +1,22 @@
+apiVersion: apps/v1              # API version for ReplicaSet
+kind: ReplicaSet                 # Resource type
+metadata:
+  name: nginx-replicaset         # Name of the ReplicaSet
+  namespace: nginx               # Namespace where ReplicaSet will run
+  labels:                        # Labels for grouping
+    app: nginx
+spec:
+  replicas: 3                    # Desired number of Pod replicas
+  selector:                      # Match Pods with these labels
+    matchLabels:
+      app: nginx
+  template:                      # Pod template (blueprint for Pods)
+    metadata:
+      labels:
+        app: nginx               # Pods created will have this label
+    spec:
+      containers:
+      - name: nginx              # Container name
+        image: nginx:latest      # Container image
+        ports:
+        - containerPort: 80      # Expose port 80 inside container

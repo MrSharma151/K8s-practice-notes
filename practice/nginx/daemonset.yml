@@ -1,0 +1,21 @@
+apiVersion: apps/v1              # API version for DaemonSet
+kind: DaemonSet                  # Resource type
+metadata:
+  name: nginx-daemonset          # Name of the DaemonSet
+  namespace: nginx               # Namespace where DaemonSet will run
+  labels:                        # Labels for grouping
+    app: nginx
+spec:
+  selector:                      # Match Pods with these labels
+    matchLabels:
+      app: nginx
+  template:                      # Pod template (blueprint for Pods)
+    metadata:
+      labels:
+        app: nginx               # Pods created will have this label
+    spec:
+      containers:
+      - name: nginx              # Container name
+        image: nginx:latest      # Container image
+        ports:
+        - containerPort: 80      # Expose port 80 inside container
