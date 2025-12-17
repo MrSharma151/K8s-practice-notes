@@ -1,0 +1,19 @@
+apiVersion: batch/v1              # API version for Job resource
+kind: Job                         # Resource type
+metadata:
+  name: busybox-job               # Name of the Job
+  namespace: nginx                # Namespace where Job will run
+spec:
+  completions: 1                  # Run once until completion
+  parallelism: 1                  # Run one Pod at a time
+  backoffLimit: 4                 # Retry up to 4 times if Pod fails
+  template:                       # Pod template (blueprint for Job Pod)
+    metadata:
+      labels:
+        app: busybox-job
+    spec:
+      restartPolicy: OnFailure     # Restart Pod only if it fails
+      containers:
+      - name: busybox-job-container # Container name
+        image: busybox:latest       # Lightweight BusyBox image
+        command: ["echo", "Hello from BusyBox Job"] # Command to run

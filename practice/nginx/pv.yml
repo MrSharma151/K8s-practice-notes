@@ -1,0 +1,15 @@
+apiVersion: v1                     # API version for PV
+kind: PersistentVolume             # Resource type
+metadata:
+  name: pv-example                 # Name of the PV
+  labels:
+    type: local                    # Label for identification
+spec:
+  capacity:
+    storage: 1Gi                   # Size of the volume
+  accessModes:
+    - ReadWriteOnce                # Access mode (single node read/write)
+  persistentVolumeReclaimPolicy: Retain  # Keep data after PVC deletion
+  storageClassName: manual         # StorageClass (manual provisioning)
+  hostPath:                        # Using local host path for demo
+    path: /mnt/data                # Path on the node

@@ -1,0 +1,25 @@
+apiVersion: batch/v1                  # API version for CronJob
+kind: CronJob                         # Resource type
+metadata:
+  name: busybox-cronjob               # Name of the CronJob
+  namespace: nginx                    # Namespace where CronJob will run
+spec:
+  schedule: "*/1 * * * *"             # Run every 1 minute (cron syntax)
+  concurrencyPolicy: Forbid           # Prevent overlapping runs
+  successfulJobsHistoryLimit: 3       # Keep last 3 successful Jobs
+  failedJobsHistoryLimit: 1           # Keep last failed Job
+  jobTemplate:                        # Template for the Job to run
+    spec:
+      completions: 1                  # Each Job runs once
+      parallelism: 1                  # One Pod at a time
+      backoffLimit: 2                 # Retry up to 2 times if Pod fails
+      template:                       # Pod template
+        metadata:
+          labels:
+            app: busybox-cronjob
+        spec:
+          restartPolicy: OnFailure     # Restart Pod only if it fails
+          containers:
+          - name: busybox-container   # Container name
+            image: busybox:latest     # Lightweight BusyBox image
+            command: ["echo", "Hello from BusyBox CronJob"] # Command to run

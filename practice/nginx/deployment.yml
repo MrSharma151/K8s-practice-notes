@@ -28,3 +28,10 @@ spec:
         image: nginx:1.25.0      # Container image (nginx latest version)
         ports:
         - containerPort: 80      # Expose port 80 inside the container
+        volumeMounts:            # Mount volumes inside the container
+        - name: nginx-storage    # Reference to volume defined below
+          mountPath: /usr/share/nginx/html  # Path inside container (nginx default web root)
+      volumes:                   # Volumes available to the Pod
+      - name: nginx-storage      # Volume name (must match volumeMounts)
+        persistentVolumeClaim:   # Use PVC for storage
+          claimName: pvc-example # PVC name (must exist in the same namespace)
