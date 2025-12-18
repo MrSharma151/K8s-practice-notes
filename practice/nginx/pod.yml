@@ -9,3 +9,13 @@ spec:
     image: nginx:latest
     ports:
     - containerPort: 80
+
+  # ----------------------------------------------------
+  # TOLERATIONS
+  # ----------------------------------------------------
+  tolerations:
+  - key: "dedicated"          # Must match taint key
+    operator: "Equal"         # Comparison operator
+    value: "nginx"            # Must match taint value
+    effect: "NoSchedule"      # Matches taint effect
+

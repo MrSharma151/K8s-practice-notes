@@ -1,0 +1,40 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+
+metadata:
+  name: demo-ingress
+  namespace: nginx
+  annotations:
+    # Rewrite /nginx → /
+    # Required because nginx backend serves content at '/'
+    nginx.ingress.kubernetes.io/rewrite-target: /
+
+spec:
+  ingressClassName: nginx
+
+  rules:
+    - http:
+        paths:
+
+          # ---------------------------------------------
+          # BACKEND / INFRA SERVICE (NGINX DEMO)
+          # ---------------------------------------------
+          - path: /nginx
+            pathType: Prefix
+            backend:
+              service:
+                name: nginx-service
+                port:
+                  number: 80
+
+          # ---------------------------------------------
+          # FRONTEND APPLICATION (React / SPA)
+          # ---------------------------------------------
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: todo-service
+                port:
+                  number: 80
+

@@ -1,0 +1,88 @@
+# ============================================================
+# MYSQL STATEFULSET (SECURE VERSION)
+# ============================================================
+# Improvements:
+# - Secrets used for passwords
+# - ConfigMap used for configuration
+# - No hardcoded sensitive values
+# ============================================================
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+  namespace: mysql
+spec:
+  replicas: 3
+
+  # ----------------------------------------------------------
+  # Headless Service name (must match Service metadata.name)
+  # ----------------------------------------------------------
+  serviceName: mysql-service
+
+  selector:
+    matchLabels:
+      app: mysql
+
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:8.0
+
+          ports:
+            - containerPort: 3306
+              name: mysql
+
+          # -----------------------------------------------
+          # Environment variables from ConfigMap & Secret
+          # -----------------------------------------------
+          env:
+            # Root password from Secret
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: MYSQL_ROOT_PASSWORD
+
+            # Database name from ConfigMap
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: mysql-config
+                  key: MYSQL_DATABASE
+
+            # App user from ConfigMap
+            - name: MYSQL_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: mysql-config
+                  key: MYSQL_USER
+
+            # App user password from Secret
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: MYSQL_PASSWORD
+
+          volumeMounts:
+            - name: mysql-data
+              mountPath: /var/lib/mysql
+
+  # ----------------------------------------------------------
+  # PVC TEMPLATE (ONE PVC PER POD)
+  # ----------------------------------------------------------
+  volumeClaimTemplates:
+    - metadata:
+        name: mysql-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+

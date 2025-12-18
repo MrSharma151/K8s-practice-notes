@@ -3,35 +3,69 @@ kind: Deployment                 # Resource type is Deployment
 metadata:
   name: nginx-deployment         # Name of the Deployment
   namespace: nginx               # Namespace where Deployment will be created
-  labels:                        # Labels attached to Deployment object
+  labels:
     app: nginx                   # Label 'app' with value 'nginx'
     tier: frontend               # Label 'tier' with value 'frontend'
-  annotations:                   # Extra metadata (not used for selection)
+  annotations:
     description: "Deployment for nginx web server"
     owner: "Rohit Sharma"
 spec:
   replicas: 2                    # Desired number of Pod replicas
-  selector:                      # Defines which Pods this Deployment manages
-    matchLabels:                 # Must match labels in Pod template
+  selector:
+    matchLabels:
       app: nginx
       tier: frontend
-  template:                      # Pod template (blueprint for Pods)
+  template:
     metadata:
-      labels:                    # Labels applied to Pods created by this Deployment
+      labels:
         app: nginx
         tier: frontend
-      annotations:               # Extra metadata for Pods
+      annotations:
         purpose: "nginx pod for demo"
     spec:
-      containers:                # List of containers in the Pod
-      - name: nginx              # Container name
-        image: nginx:1.25.0      # Container image (nginx latest version)
+      containers:
+      - name: nginx
+        image: nginx:1.25.0
         ports:
-        - containerPort: 80      # Expose port 80 inside the container
-        volumeMounts:            # Mount volumes inside the container
-        - name: nginx-storage    # Reference to volume defined below
-          mountPath: /usr/share/nginx/html  # Path inside container (nginx default web root)
-      volumes:                   # Volumes available to the Pod
-      - name: nginx-storage      # Volume name (must match volumeMounts)
-        persistentVolumeClaim:   # Use PVC for storage
-          claimName: pvc-example # PVC name (must exist in the same namespace)
+        - containerPort: 80
+
+        # ----------------------------------------------------
+        # RESOURCE REQUESTS & LIMITS
+        # ----------------------------------------------------
+        resources:
+          requests:
+            cpu: "100m"          # Guaranteed 0.1 CPU
+            memory: "128Mi"      # Guaranteed 128 MB RAM
+          limits:
+            cpu: "500m"          # Max 0.5 CPU
+            memory: "256Mi"      # Max 256 MB RAM
+
+        # ----------------------------------------------------
+        # PROBES
+        # ----------------------------------------------------
+        livenessProbe:           # Checks if container is alive
+          httpGet:
+            path: /              # Root path of nginx
+            port: 80
+          initialDelaySeconds: 10 # Wait before first check
+          periodSeconds: 5        # Check every 5s
+        readinessProbe:          # Checks if container is ready
+          httpGet:
+            path: /              # Root path of nginx
+            port: 80
+          initialDelaySeconds: 5  # Wait before first check
+          periodSeconds: 5        # Check every 5s
+        startupProbe:            # Checks if container started
+          httpGet:
+            path: /              # Root path of nginx
+            port: 80
+          failureThreshold: 30    # Allow up to 30 failures
+          periodSeconds: 10       # Check every 10s
+
+        volumeMounts:
+        - name: nginx-storage
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: nginx-storage
+        persistentVolumeClaim:
+          claimName: pvc-example

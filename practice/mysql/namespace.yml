@@ -1,0 +1,13 @@
+# ============================================================
+# NAMESPACE FOR MYSQL STATEFULSET DEMO
+# ============================================================
+# Namespace logically isolates MySQL resources
+# (Pods, Services, PVCs, StatefulSet, etc.)
+# This helps in better organization and cleanup.
+# ============================================================
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mysql          # Namespace name where MySQL resources will live
+

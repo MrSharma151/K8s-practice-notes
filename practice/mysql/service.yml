@@ -1,0 +1,32 @@
+# ============================================================
+# HEADLESS SERVICE FOR MYSQL STATEFULSET
+# ============================================================
+# Headless Service provides:
+# - Stable network identity for StatefulSet Pods
+# - One DNS record per Pod instead of load-balancing
+#
+# DNS FORMAT:
+# <pod-name>.<service-name>.<namespace>.svc.cluster.local
+#
+# Example DNS entry:
+# mysql-0.mysql-service.mysql.svc.cluster.local
+#
+# NOTE:
+# - clusterIP: None is mandatory for StatefulSet
+# - service name MUST match StatefulSet.spec.serviceName
+# ============================================================
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service          # Headless Service name
+  namespace: mysql             # Same namespace as StatefulSet
+spec:
+  clusterIP: None              # Makes this a Headless Service
+  selector:
+    app: mysql                 # Must match Pod labels
+  ports:
+    - name: mysql
+      port: 3306               # Service port
+      targetPort: 3306         # Container port
+

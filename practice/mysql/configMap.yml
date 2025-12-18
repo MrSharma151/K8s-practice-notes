@@ -1,0 +1,18 @@
+# ============================================================
+# MYSQL CONFIGMAP
+# ============================================================
+# ConfigMap is used to store NON-SENSITIVE configuration
+# This helps in:
+# - Avoiding hardcoded values in StatefulSet
+# - Easy configuration updates without changing Pod spec
+# ============================================================
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-config
+  namespace: mysql
+data:
+  MYSQL_DATABASE: demo_db        # Database to be created on startup
+  MYSQL_USER: demo_user          # Application user
+
