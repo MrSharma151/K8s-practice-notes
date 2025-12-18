@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox-load
+  namespace: apache
+spec:
+  containers:
+    - name: busybox
+      image: busybox
+      command:
+        - sh
+        - -c
+        - |
+          # Infinite loop to continuously hit Apache service
+          while true; do
+            wget -q -O- http://apache-service.apache.svc.cluster.local > /dev/null
+          done
+
