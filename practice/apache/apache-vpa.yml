@@ -1,0 +1,30 @@
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: apache-vpa
+  namespace: apache
+spec:
+  # Target workload for VPA
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: apache-deployment
+
+  # How VPA applies recommendations
+  updatePolicy:
+    updateMode: Auto   # Auto = evict & recreate pods with new resources
+
+  # Resource policy constraints
+  resourcePolicy:
+    containerPolicies:
+      - containerName: apache
+        controlledResources:
+          - cpu
+          - memory
+        minAllowed:
+          cpu: "50m"
+          memory: "64Mi"
+        maxAllowed:
+          cpu: "1"
+          memory: "512Mi"
+

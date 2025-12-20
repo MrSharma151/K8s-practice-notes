@@ -1,0 +1,22 @@
+# ----------------------------------
+# TLS / Certificate files (DO NOT COMMIT)
+# ----------------------------------
+*.pem
+*.key
+*.crt
+*.cnf
+
+# ----------------------------------
+# Kubernetes / tooling leftovers (optional but useful)
+# ----------------------------------
+*.log
+*.tmp
+*.swp
+
+# ----------------------------------
+# OS / Editor files
+# ----------------------------------
+.DS_Store
+.vscode/
+.idea/
+
