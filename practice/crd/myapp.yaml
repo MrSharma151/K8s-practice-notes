@@ -1,0 +1,11 @@
+# Custom Resource created using MyApp CRD
+apiVersion: demo.example.com/v1
+kind: MyApp
+metadata:
+  name: sample-app
+  namespace: crd-demo
+spec:
+  appName: apache-demo
+  image: httpd:2.4
+  replicas: 3
+

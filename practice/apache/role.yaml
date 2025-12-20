@@ -1,0 +1,67 @@
+# ------------------------------------------------------------
+# Role: apache-reader-role
+# Scope: Namespace-level (apache)
+#
+# Purpose:
+# This Role provides READ-ONLY access to selected Kubernetes
+# resources inside the "apache" namespace.
+#
+# Important:
+# - Role is namespace-scoped (cannot access other namespaces)
+# - Role ONLY defines permissions (does not grant access)
+# - Access is granted via RoleBinding
+# ------------------------------------------------------------
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  # Name of the Role (referenced by RoleBinding)
+  name: apache-reader-role
+
+  # Namespace where this Role is valid
+  namespace: apache
+
+rules:
+  # --------------------------------------------------------
+  # Rule 1: Read-only access to Pods
+  #
+  # apiGroups: [""]  -> Core API group (pods, services, configmaps)
+  # resources: ["pods"] -> Pod resources
+  # verbs:
+  #   get   -> Read a single pod
+  #   list  -> List all pods in namespace
+  #   watch -> Watch pod changes (important for controllers / dashboards)
+  # --------------------------------------------------------
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch"]
+
+  # --------------------------------------------------------
+  # Rule 2: Read-only access to Services
+  #
+  # Used when applications or users need:
+  # - Service discovery
+  # - Checking ClusterIP / ports
+  #
+  # Note:
+  # - No create/update/delete → cannot modify services
+  # --------------------------------------------------------
+  - apiGroups: [""]
+    resources: ["services"]
+    verbs: ["get", "list"]
+
+  # --------------------------------------------------------
+  # Rule 3: Read-only access to ConfigMaps
+  #
+  # Common use cases:
+  # - Applications reading configuration
+  # - Debugging environment-specific configs
+  #
+  # Security note:
+  # - ConfigMaps are NOT secrets
+  # - Secrets require separate explicit permissions
+  # --------------------------------------------------------
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get", "list"]
+

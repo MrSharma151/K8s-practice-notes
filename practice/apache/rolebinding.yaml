@@ -1,0 +1,64 @@
+# ------------------------------------------------------------
+# RoleBinding: apache-reader-binding
+# Scope: Namespace-level (apache)
+#
+# Purpose:
+# This RoleBinding connects a Role (permissions)
+# with a ServiceAccount (identity).
+#
+# In simple terms:
+# - RoleBinding decides WHO gets WHAT access
+# - It does NOT define permissions itself
+# ------------------------------------------------------------
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  # Name of the RoleBinding
+  name: apache-reader-binding
+
+  # Namespace where this binding is effective
+  # NOTE:
+  # - Both Role and RoleBinding must be in the same namespace
+  namespace: apache
+
+subjects:
+  # --------------------------------------------------------
+  # Subject: WHO will receive the permissions
+  #
+  # kind: ServiceAccount
+  # - This indicates application-level identity
+  #
+  # name: apache-sa
+  # - ServiceAccount name
+  #
+  # namespace: apache
+  # - Namespace where the ServiceAccount exists
+  #
+  # IMPORTANT:
+  # - Namespace is mandatory for ServiceAccount subjects
+  # --------------------------------------------------------
+  - kind: ServiceAccount
+    name: apache-sa
+    namespace: apache
+
+roleRef:
+  # --------------------------------------------------------
+  # RoleRef: WHAT permissions are being granted
+  #
+  # kind: Role
+  # - Namespace-scoped permissions
+  #
+  # name: apache-reader-role
+  # - Must exactly match the Role name
+  #
+  # apiGroup: rbac.authorization.k8s.io
+  # - RBAC API group (always this value)
+  #
+  # IMPORTANT:
+  # - roleRef is immutable once created
+  # --------------------------------------------------------
+  kind: Role
+  name: apache-reader-role
+  apiGroup: rbac.authorization.k8s.io
+
